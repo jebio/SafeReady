@@ -27,7 +27,7 @@ export function AppHeader({ user }: AppHeaderProps) {
           await authClient.signOut()
           router.push("/login")
         }}
-        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        className="flex cursor-pointer items-center gap-1 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
       >
         <LogOut className="h-4 w-4" />
         Sign out

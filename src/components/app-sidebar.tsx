@@ -34,7 +34,7 @@ export function AppSidebar() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+              "flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 hover:bg-secondary hover:text-secondary-foreground",
             )}
           >
             <item.icon className="h-4 w-4" />

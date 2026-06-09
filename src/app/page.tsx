@@ -65,7 +65,7 @@ export default function LandingPage() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="rounded-lg border p-6"
+              className="rounded-lg border p-6 transition-all duration-200 hover:shadow-md"
             >
               <feature.icon className="h-8 w-8 text-primary" />
               <h3 className="mt-4 font-semibold">{feature.title}</h3>

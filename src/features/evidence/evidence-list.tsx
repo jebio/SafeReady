@@ -46,6 +46,7 @@ export function EvidenceList({ files }: EvidenceListProps) {
           <Button
             variant="ghost"
             size="sm"
+            className="cursor-pointer"
             onClick={async () => {
               const url = await getSignedDownloadUrl(file.storagePath)
               if (url) window.open(url, "_blank")
