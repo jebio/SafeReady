@@ -4,6 +4,7 @@ import { salonTemplate } from "../seed/templates/salon"
 import { workshopTemplate } from "../seed/templates/workshop"
 import { retailTemplate } from "../seed/templates/retail"
 import { seedDemoWorkspace } from "../seed/demo-data"
+import { seedDemoAccounts } from "../seed/demo-accounts"
 
 async function seedTemplates() {
   const templates = [officeTemplate, salonTemplate, workshopTemplate, retailTemplate]
@@ -45,6 +46,8 @@ async function main() {
   await seedTemplates()
   console.log("Seeding demo workspace...")
   await seedDemoWorkspace()
+  console.log("Seeding demo accounts...")
+  await seedDemoAccounts()
   console.log("Seed complete.")
 }
 
