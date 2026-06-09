@@ -18,7 +18,7 @@ export async function getTasks() {
   const member = await db.workspaceMember.findFirst({
     where: { userId: session.user.id },
   })
-  if (!member) throw new Error("No workspace found")
+  if (!member) return []
 
   const tasks = await db.checklistTask.findMany({
     where: { workspaceId: member.workspaceId, active: true },
@@ -64,7 +64,16 @@ export async function getDashboardStats() {
     where: { userId: session.user.id },
     include: { workspace: true },
   })
-  if (!member) throw new Error("No workspace found")
+  if (!member) {
+    return {
+      totalTasks: 0,
+      dueCount: 0,
+      overdueCount: 0,
+      completedCount: 0,
+      complianceScore: 0,
+      workspaceName: "",
+    }
+  }
 
   const now = new Date()
   const occurrences = await db.taskOccurrence.findMany({

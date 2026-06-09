@@ -17,3 +17,6 @@
 
 # authentication
 - Prefer Better-Auth for auth implementation (email/password, database sessions, invite-only). Confidence: 0.60
+
+# ui-ux
+- Add confirmation prompts (`window.confirm`) before destructive actions like removing team members. Confidence: 0.70
