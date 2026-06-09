@@ -4,19 +4,13 @@ import { promisify } from "node:util"
 
 const scryptAsync = promisify(scrypt)
 
-/**
- * Hash a password using the same scrypt params as Better-Auth's default hasher.
- * Caller: Better-Auth converts the salt to a hex *string* first, then passes that
- * string to scrypt() — the key difference from passing a raw Buffer.
- */
 async function hashPassword(password: string): Promise<string> {
   const saltHex = randomBytes(16).toString("hex")
-  const derivedKey = (await scryptAsync(password, saltHex, 64, {
-    N: 16384,
-    r: 16,
-    p: 1,
-    maxmem: 64 * 1024 * 1024,
-  })) as Buffer
+  const derivedKey = (await scryptAsync(
+    password,
+    saltHex,
+    64,
+  )) as Buffer
   return `${saltHex}:${derivedKey.toString("hex")}`
 }
 
