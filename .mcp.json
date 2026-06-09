@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "transport": "http",
+      "enabled": true,
+      "url": "https://mcp.supabase.com/mcp?project_ref=nwmhigvfhmnwsoupuvvl",
+      "oauth": {
+        "authorizationUrl": "https://api.supabase.com/v1/oauth/authorize",
+        "tokenUrl": "https://api.supabase.com/v1/oauth/token",
+        "clientId": "2c14f15b-54d7-43a5-9d9e-0d89f4b95f1c",
+        "scopes": [
+          "organizations:read",
+          "projects:read",
+          "projects:write",
+          "database:write",
+          "database:read",
+          "analytics:read",
+          "secrets:read",
+          "edge_functions:read",
+          "edge_functions:write",
+          "environment:read",
+          "environment:write",
+          "storage:read"
+        ]
+      }
+    }
+  }
+}

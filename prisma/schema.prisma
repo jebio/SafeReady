@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Better-Auth Core Models ─────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions       Session[]
+  accounts       Account[]
+  workspaceMembers WorkspaceMember[]
+  evidenceFiles  EvidenceFile[]
+  auditLogs      AuditLog[]
+  notifications  Notification[]
+  completedOccurrences TaskOccurrence[] @relation("CompletedByUser")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+// ─── App Models ──────────────────────────────────────────────────────
+
+model Workspace {
+  id           String   @id @default(cuid())
+  name         String
+  sector       String?
+  address      String?
+  contactName  String?
+  contactEmail String?
+  phone        String?
+  logoUrl      String?
+  trialEndsAt  DateTime?
+  createdAt    DateTime @default(now())
+
+  members      WorkspaceMember[]
+  invitations  Invitation[]
+  templates    WorkspaceTemplate[]
+  tasks        ChecklistTask[]
+  occurrences  TaskOccurrence[]
+  evidenceFiles EvidenceFile[]
+  auditLogs    AuditLog[]
+  notifications Notification[]
+}
+
+model WorkspaceMember {
+  id           String   @id @default(cuid())
+  workspaceId  String
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role         String   @default("staff") // "owner" | "staff"
+  invitedEmail String?
+  invitedAt    DateTime?
+  joinedAt     DateTime?
+  createdAt    DateTime @default(now())
+
+  assignedTasks ChecklistTask[]
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+  @@index([userId])
+}
+
+model Invitation {
+  id          String   @id @default(cuid())
+  email       String
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  token       String   @unique @default(cuid())
+  role        String   @default("staff")
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+  @@index([token])
+}
+
+model SystemTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  sector    String?
+  createdAt DateTime @default(now())
+
+  items       SystemTemplateItem[]
+  workspaceTemplates WorkspaceTemplate[]
+}
+
+model SystemTemplateItem {
+  id               String  @id @default(cuid())
+  templateId       String
+  template         SystemTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  category         String?
+  frequency        String   // "daily" | "weekly" | "monthly" | "quarterly" | "yearly"
+  evidenceRequired Boolean @default(false)
+  notesHint        String?
+  sourceLabel      String?
+  sourceUrl        String?
+  sortOrder        Int     @default(0)
+}
+
+model WorkspaceTemplate {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  templateId  String
+  template    SystemTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  enabledAt   DateTime @default(now())
+
+  @@unique([workspaceId, templateId])
+}
+
+model ChecklistTask {
+  id                String  @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  templateItemId    String?
+  title             String   // snapshot from template or custom
+  description       String?
+  category          String?
+  frequency         String   // "daily" | "weekly" | "monthly" | "quarterly" | "yearly"
+  evidenceRequired  Boolean @default(false)
+  notesHint         String?
+  sourceLabel       String?
+  sourceUrl         String?
+  assignedUserId    String?
+  assignedUser      WorkspaceMember? @relation(fields: [assignedUserId], references: [id])
+  active            Boolean @default(true)
+  createdByUserId   String
+  createdAt         DateTime @default(now())
+
+  occurrences  TaskOccurrence[]
+
+  @@index([workspaceId])
+  @@index([assignedUserId])
+}
+
+model TaskOccurrence {
+  id                String    @id @default(cuid())
+  workspaceId       String
+  workspace         Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  taskId            String
+  task              ChecklistTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  dueDate           DateTime
+  status            String    @default("due") // "due" | "completed"
+  completedAt       DateTime?
+  completedByUserId String?
+  completedBy       User?     @relation("CompletedByUser", fields: [completedByUserId], references: [id])
+  completedByName   String?
+  notes             String?
+  createdAt         DateTime  @default(now())
+
+  evidenceFiles EvidenceFile[]
+
+  @@index([workspaceId, status])
+  @@index([taskId])
+  @@index([dueDate])
+}
+
+model EvidenceFile {
+  id               String   @id @default(cuid())
+  workspaceId      String
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  occurrenceId     String
+  occurrence       TaskOccurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  storagePath      String
+  originalFilename String
+  contentType      String
+  fileSize         Int
+  uploadedByUserId String
+  uploadedBy       User     @relation(fields: [uploadedByUserId], references: [id])
+  uploadedAt       DateTime @default(now())
+
+  @@index([occurrenceId])
+  @@index([workspaceId])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  actorUserId String?
+  actor       User?    @relation(fields: [actorUserId], references: [id])
+  actionType  String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  type        String
+  title       String
+  body        String?
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, readAt])
+}
