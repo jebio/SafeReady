@@ -20,9 +20,18 @@ export async function sendInviteEmail({
     return { ok: true }
   }
 
+  const to = process.env.DEV_EMAIL_OVERRIDE ?? email
+  const from = process.env.DEV_EMAIL_FROM ?? "SafeReady <noreply@safeready.app>"
+  if (process.env.DEV_EMAIL_OVERRIDE) {
+    console.log(`[dev] DEV_EMAIL_OVERRIDE: original → ${email}, redirecting to → ${to}`)
+  }
+  if (process.env.DEV_EMAIL_FROM) {
+    console.log(`[dev] DEV_EMAIL_FROM: using sender → ${from}`)
+  }
+
   const { error } = await resend.emails.send({
-    from: "SafeReady <noreply@safeready.app>",
-    to: email,
+    from,
+    to,
     subject: `${inviterName} invited you to join ${workspaceName} on SafeReady`,
     html: `<p>Hi,</p>
 <p>${inviterName} has invited you to join <strong>${workspaceName}</strong> on SafeReady.</p>

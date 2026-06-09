@@ -60,10 +60,22 @@ const inviteSchema = z.object({
   email: z.string().email(),
 })
 
+export interface InviteMemberResult {
+  error: string | null
+  member?: {
+    id: string
+    userId: string
+    name: string
+    email: string
+    role: string
+    joinedAt: Date | null
+  }
+}
+
 export async function inviteMember(
   prev: { error: string | null },
   formData: FormData,
-): Promise<{ error: string | null }> {
+): Promise<InviteMemberResult> {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) return { error: "Unauthorized" }
 
@@ -94,6 +106,50 @@ export async function inviteMember(
     where: { id: member.workspaceId },
   })
   if (!workspace) return { error: "Workspace not found" }
+
+  // If the user already has an account (no workspace membership anywhere),
+  // auto-link them directly instead of sending an invitation.
+  const existingUser = await db.user.findUnique({ where: { email } })
+  if (existingUser) {
+    const userInAnyWorkspace = await db.workspaceMember.findFirst({
+      where: { userId: existingUser.id },
+    })
+    if (!userInAnyWorkspace) {
+      const newMember = await db.workspaceMember.create({
+        data: {
+          workspaceId: member.workspaceId,
+          userId: existingUser.id,
+          role: "staff",
+          invitedAt: new Date(),
+          joinedAt: new Date(),
+        },
+      })
+
+      await db.auditLog.create({
+        data: {
+          workspaceId: member.workspaceId,
+          actorUserId: session.user.id,
+          actionType: "member.added",
+          entityType: "workspace_member",
+          entityId: newMember.id,
+          metadata: { email, autoLinked: true },
+        },
+      })
+
+      revalidatePath("/team")
+      return {
+        error: null,
+        member: {
+          id: newMember.id,
+          userId: existingUser.id,
+          name: existingUser.name,
+          email: existingUser.email,
+          role: newMember.role,
+          joinedAt: newMember.joinedAt,
+        },
+      }
+    }
+  }
 
   const token = crypto.randomUUID()
 

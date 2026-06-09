@@ -1,14 +1,13 @@
 "use client"
 
-import { useActionState, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useActionState, useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   MemberList,
   InviteForm,
   PendingInvites,
 } from "@/features/team/team-management"
-import { inviteMember, removeMember, cancelInvitation } from "@/actions/team"
+import { inviteMember, type InviteMemberResult, removeMember, cancelInvitation } from "@/actions/team"
 
 interface TeamPageClientProps {
   currentUserId: string
@@ -40,8 +39,17 @@ export function TeamPageClient({
   const [invitations, setInvitations] = useState(initialInvitations)
   const [inviteState, inviteAction, invitePending] = useActionState(
     inviteMember,
-    { error: null },
+    { error: null } as InviteMemberResult,
   )
+
+  useEffect(() => {
+    if (inviteState?.member) {
+      setMembers((prev) => {
+        if (prev.find((m) => m.id === inviteState.member!.id)) return prev
+        return [...prev, inviteState.member!]
+      })
+    }
+  }, [inviteState?.member])
 
   const handleRemove = async (memberId: string) => {
     const member = members.find((m) => m.id === memberId)
