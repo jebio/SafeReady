@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { sendInviteEmail } from "@/lib/email"
 import { addDays } from "date-fns"
+import { createNotification } from "@/lib/notifications"
 
 export async function getMembers() {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -125,16 +126,27 @@ export async function inviteMember(
         },
       })
 
-      await db.auditLog.create({
-        data: {
-          workspaceId: member.workspaceId,
-          actorUserId: session.user.id,
-          actionType: "member.added",
-          entityType: "workspace_member",
-          entityId: newMember.id,
-          metadata: { email, autoLinked: true },
-        },
-      })
+      await db.$transaction([
+        db.auditLog.create({
+          data: {
+            workspaceId: member.workspaceId,
+            actorUserId: session.user.id,
+            actionType: "member.added",
+            entityType: "workspace_member",
+            entityId: newMember.id,
+            metadata: { email, autoLinked: true },
+          },
+        }),
+        db.notification.create({
+          data: {
+            workspaceId: member.workspaceId,
+            type: "member.joined",
+            title: `${existingUser.name} joined the workspace`,
+            body: "Auto-linked via existing account.",
+            userId: null,
+          },
+        }),
+      ])
 
       revalidatePath("/team")
       return {
@@ -178,16 +190,26 @@ export async function inviteMember(
       return { error: result.error ?? "Failed to send invitation" }
     }
 
-    await db.auditLog.create({
-      data: {
-        workspaceId: member.workspaceId,
-        actorUserId: session.user.id,
-        actionType: "invitation.sent",
-        entityType: "invitation",
-        entityId: invitation.id,
-        metadata: { email },
-      },
-    })
+    await db.$transaction([
+      db.auditLog.create({
+        data: {
+          workspaceId: member.workspaceId,
+          actorUserId: session.user.id,
+          actionType: "invitation.sent",
+          entityType: "invitation",
+          entityId: invitation.id,
+          metadata: { email },
+        },
+      }),
+      db.notification.create({
+        data: {
+          workspaceId: member.workspaceId,
+          type: "invitation.sent",
+          title: `Invitation sent to ${email}`,
+          userId: null,
+        },
+      }),
+    ])
   } catch {
     return { error: "Failed to send invitation" }
   }
@@ -216,15 +238,25 @@ export async function removeMember(
   try {
     await db.workspaceMember.delete({ where: { id: targetId } })
 
-    await db.auditLog.create({
-      data: {
-        workspaceId: member.workspaceId,
-        actorUserId: session.user.id,
-        actionType: "member.removed",
-        entityType: "workspace_member",
-        entityId: targetId,
-      },
-    })
+    await db.$transaction([
+      db.auditLog.create({
+        data: {
+          workspaceId: member.workspaceId,
+          actorUserId: session.user.id,
+          actionType: "member.removed",
+          entityType: "workspace_member",
+          entityId: targetId,
+        },
+      }),
+      db.notification.create({
+        data: {
+          workspaceId: member.workspaceId,
+          type: "member.removed",
+          title: "Team member removed",
+          userId: null,
+        },
+      }),
+    ])
   } catch {
     return { error: "Failed to remove member" }
   }

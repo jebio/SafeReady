@@ -164,6 +164,15 @@ export async function completeTask(
           metadata: { taskTitle: occurrence.task.title },
         },
       }),
+      db.notification.create({
+        data: {
+          workspaceId: occurrence.workspaceId,
+          type: "task.completed",
+          title: `"${occurrence.task.title}" completed`,
+          body: `${session.user.name} completed this check.`,
+          userId: null,
+        },
+      }),
     ])
   } catch {
     return { error: "Failed to complete task" }

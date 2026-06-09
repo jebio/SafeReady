@@ -3,6 +3,7 @@
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
 import { LogOut, User } from "lucide-react"
+import { NotificationBell } from "@/features/notifications/notification-bell"
 
 interface AppHeaderProps {
   user: {
@@ -11,13 +12,15 @@ interface AppHeaderProps {
     email: string
     image?: string | null
   }
+  unreadCount?: number
 }
 
-export function AppHeader({ user }: AppHeaderProps) {
+export function AppHeader({ user, unreadCount = 0 }: AppHeaderProps) {
   const router = useRouter()
 
   return (
     <header className="flex h-14 items-center justify-end gap-4 border-b bg-card px-6">
+      <NotificationBell initialUnreadCount={unreadCount} />
       <span className="flex items-center gap-2 text-sm text-muted-foreground">
         <User className="h-4 w-4" />
         {user.name}

@@ -6,6 +6,7 @@ import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { SECTORS } from "@/lib/constants"
+import { createNotification } from "@/lib/notifications"
 
 const onboardSchema = z.object({
   workspaceName: z.string().min(1, "Business name is required"),
@@ -116,6 +117,16 @@ export async function onboardWorkspace(
             templateName: template.name,
             taskCount: template.items.length,
           },
+        },
+      })
+
+      await tx.notification.create({
+        data: {
+          workspaceId: workspace.id,
+          type: "workspace.created",
+          title: "Workspace created",
+          body: `${workspaceName} is ready with ${template.items.length} checklist items.`,
+          userId: null,
         },
       })
     })
