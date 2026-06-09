@@ -118,7 +118,7 @@ Member list with roles, remove button (owner only)
 Filterable completed task list by date range
 
 ### 4.2 Inspection Pack
-Printable HTML view with summary, completed items, evidence links, legal disclaimer
+Server-side PDF generated via `@react-pdf/renderer` (React component → `pdf().toBlob()` → API route serves attachment). Summary, completed items, evidence links, legal disclaimer. **Do not use browser print-to-PDF** — it produces inconsistent results. The `/api/inspection-pack/generate` endpoint returns the PDF as a downloadable attachment.
 
 ### 4.3 Analytics Page
 Compliance score, trend, most-missed categories

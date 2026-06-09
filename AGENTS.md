@@ -31,8 +31,5 @@
   - Responsive breakpoints: 375px, 768px, 1024px, 1440px
   - No horizontal scroll on mobile
 
-## Testing
-- The project uses **Vitest** for unit/integration tests. Config is at the repo root.
-- Tests live next to the code they test as `*.test.ts` or `*.test.tsx` co-located files.
-- All test files follow the pattern: `src/<domain>/__tests__/<module>.test.ts` for shared utilities, or `.test.tsx` co-located with the component for React modules.
-- Use the `test-runner` agent (`.commandcode/agents/test-runner.md`) after implementing any important feature — it handles test creation and suite validation automatically.
+## PDF Generation
+- Use `@react-pdf/renderer` v4 for server-side PDF generation. Never use browser print-to-PDF. Create React components with `<Document>`, `<Page>`, `<View>`, `<Text>` and render via `ReactPDF.pdf(element).toBlob()`. Serve through API routes as downloadable attachments with `Content-Type: application/pdf`.

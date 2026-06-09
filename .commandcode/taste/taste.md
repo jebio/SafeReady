@@ -20,3 +20,6 @@
 
 # ui-ux
 - Add confirmation prompts (`window.confirm`) before destructive actions like removing team members. Confidence: 0.70
+
+# pdf-generation
+- For Inspection Pack, use server-side PDF generation instead of browser print-to-PDF. Confidence: 0.85

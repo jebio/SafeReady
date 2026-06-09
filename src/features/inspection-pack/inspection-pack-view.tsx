@@ -1,23 +1,38 @@
 "use client"
 
+import { useCallback, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/utils"
-import { Printer } from "lucide-react"
+import { FileDown, Loader2 } from "lucide-react"
 import type { InspectionPackData } from "@/actions/inspection-pack"
-import { useRouter } from "next/navigation"
 
 interface InspectionPackViewProps {
   data: InspectionPackData
 }
 
 export function InspectionPackView({ data }: InspectionPackViewProps) {
-  const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
-  const handlePrint = () => {
-    window.print()
-  }
+  const handleDownload = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await fetch("/api/inspection-pack/generate")
+      if (!res.ok) throw new Error("Failed to generate PDF")
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `${data.workspaceName.replace(/[^a-zA-Z0-9]/g, "_")}_inspection_pack.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error("Download failed:", err)
+    } finally {
+      setLoading(false)
+    }
+  }, [data.workspaceName])
 
   const {
     workspaceName,
@@ -31,22 +46,28 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
   } = data
 
   return (
-    <div className="space-y-6 print:space-y-4">
-      {/* Controls — hidden when printing */}
-      <div className="flex items-center justify-between print:hidden">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Inspection Pack</h1>
           <p className="text-sm text-muted-foreground">
-            Printable compliance summary
+            Compliance summary as a downloadable PDF
           </p>
         </div>
-        <Button onClick={handlePrint} className="cursor-pointer">
-          <Printer className="mr-2 h-4 w-4" />
-          Print / Save PDF
+        <Button
+          onClick={handleDownload}
+          disabled={loading}
+          className="cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <FileDown className="mr-2 h-4 w-4" />
+          )}
+          {loading ? "Generating..." : "Download PDF"}
         </Button>
       </div>
 
-      {/* Header — always visible */}
       <div className="space-y-1">
         <h1 className="text-xl font-bold">{workspaceName}</h1>
         <p className="text-sm text-muted-foreground">
@@ -54,7 +75,6 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
         </p>
       </div>
 
-      {/* Business details */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium">Business Details</CardTitle>
@@ -72,7 +92,6 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
         </CardContent>
       </Card>
 
-      {/* Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium">Compliance Summary</CardTitle>
@@ -97,7 +116,6 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
         </CardContent>
       </Card>
 
-      {/* Completed items */}
       <div className="space-y-3">
         <h2 className="text-base font-semibold">Completed Checklist Items ({completedItems.length})</h2>
         {completedItems.length === 0 ? (
@@ -140,14 +158,9 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="border-t pt-4 text-center text-xs text-muted-foreground print:pt-2">
+      <div className="border-t pt-4 text-center text-xs text-muted-foreground">
         <p>SafeReady &mdash; Safety compliance for UK small businesses</p>
-        <p>
-          This pack contains {completedItems.length} completed checks across{" "}
-          {summary.totalTasks} total tasks.
-        </p>
-        <p className="mt-1 text-[10px]">
+        <p className="mt-1">
           This document is a summary of compliance activities and does not constitute legal advice.
           Businesses should seek professional guidance on their specific legal obligations.
         </p>
