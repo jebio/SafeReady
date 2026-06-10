@@ -2,41 +2,52 @@ import { vi } from "vitest"
 
 export function mockAuth(userId = "user_01") {
   vi.mock("@/lib/auth", () => ({
-    auth: vi.fn(() =>
-      Promise.resolve({
-        user: { id: userId, name: "Test User", email: "test@example.com" },
-        session: { id: "sess_01" },
-      })
-    ),
-  }))
-}
-
-export function mockPrisma() {
-  vi.mock("@/lib/db", () => ({
-    prisma: {
-      user: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      session: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      account: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      workspace: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      workspaceMember: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      invitation: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      checklistTask: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      taskOccurrence: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      evidenceFile: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      auditLog: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      notification: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      systemTemplate: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      systemTemplateItem: { findUnique: vi.fn(), findFirst: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-      $transaction: vi.fn((fn: any) => fn(prisma)),
+    auth: {
+      api: {
+        getSession: vi.fn().mockResolvedValue({
+          user: { id: userId, name: "Test User", email: "test@example.com" },
+          session: { id: "sess_01" },
+        }),
+      },
     },
   }))
 }
 
+export function mockPrisma() {
+  const createModel = () => ({
+    findUnique: vi.fn(),
+    findFirst: vi.fn(),
+    findMany: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  })
+
+  const db = {
+    user: createModel(),
+    session: createModel(),
+    account: createModel(),
+    workspace: createModel(),
+    workspaceMember: createModel(),
+    invitation: createModel(),
+    checklistTask: createModel(),
+    taskOccurrence: createModel(),
+    evidenceFile: createModel(),
+    auditLog: createModel(),
+    notification: createModel(),
+    systemTemplate: createModel(),
+    systemTemplateItem: createModel(),
+    $transaction: vi.fn((fn: any) => fn(db)),
+  }
+
+  vi.mock("@/lib/db", () => ({ db }))
+}
+
 export function mockSupabaseStorage() {
   vi.mock("@/lib/supabase-storage", () => ({
-    uploadFile: vi.fn().mockResolvedValue({ data: { path: "evidence/test.pdf" }, error: null }),
-    getSignedUrl: vi.fn().mockResolvedValue({ data: { signedUrl: "https://example.com/file.pdf" }, error: null }),
-    deleteFile: vi.fn().mockResolvedValue({ error: null }),
+    getSignedUploadUrl: vi.fn().mockResolvedValue({ data: { url: "https://example.com/upload", token: "token" }, error: null }),
+    getSignedDownloadUrl: vi.fn().mockResolvedValue({ data: { url: "https://example.com/download" }, error: null }),
+    deleteStorageFile: vi.fn().mockResolvedValue({ error: null }),
   }))
 }
 

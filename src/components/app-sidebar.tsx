@@ -7,12 +7,14 @@ import {
   Users,
   Settings,
   BarChart3,
+  ListChecks,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/checklists", label: "Checklists", icon: ClipboardCheck },
+  { href: "/checklists/manage", label: "Manage Tasks", icon: ListChecks },
   { href: "/history", label: "History", icon: History },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/inspection-pack", label: "Inspection Pack", icon: FileText },
