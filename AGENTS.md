@@ -35,6 +35,6 @@
 - Use `@react-pdf/renderer` v4 for server-side PDF generation. Never use browser print-to-PDF. Create React components with `<Document>`, `<Page>`, `<View>`, `<Text>` and render via `ReactPDF.pdf(element).toBlob()`. Serve through API routes as downloadable attachments with `Content-Type: application/pdf`.
 
 ## Testing
-- **Always** use the `tester` agent (`.commandcode/agents/tester/SKILL.md`) when creating or modifying tests. It generates unit, component/integration, and E2E tests depending on what changed.
+- **Always** use the `tester` skill (`.commandcode/skills/tester/SKILL.md`) when creating or modifying tests. It generates unit, component/integration, and E2E tests depending on what changed.
 - Tests run via Vitest v4 (unit + component) and Playwright (E2E).
 - Test scripts: `bun run test` (unit), `bun run test:component` (RTL + jsdom), `bun run test:e2e` (Playwright), `bun run test:ci` (both unit + component).

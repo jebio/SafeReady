@@ -5,6 +5,9 @@
 # agents
 - Define commandcode agents as proper agent files (e.g., `.commandcode/agents/`), not as plain text documentation in AGENTS.md. Confidence: 0.65
 
+# skills
+- SKILL.md files belong in `.commandcode/skills/` directory, not `.commandcode/agents/` directory. Confidence: 0.70
+
 # configuration
 - When setting up database or infrastructure credentials in `.env` files, create placeholder/template configs and let the user fill in sensitive credentials themselves rather than trying to discover or guess passwords. Confidence: 0.80
 
