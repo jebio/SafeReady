@@ -1,9 +1,9 @@
 "use client"
 
-import { FileText, Download } from "lucide-react"
+import { useState } from "react"
+import { FileText, Download, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatDate } from "@/lib/utils"
-import { getSignedDownloadUrl } from "@/lib/supabase-storage"
 
 interface EvidenceFile {
   id: string
@@ -17,9 +17,12 @@ interface EvidenceFile {
 
 interface EvidenceListProps {
   files: EvidenceFile[]
+  onDelete: (id: string) => void
 }
 
-export function EvidenceList({ files }: EvidenceListProps) {
+export function EvidenceList({ files, onDelete }: EvidenceListProps) {
+  const [deleting, setDeleting] = useState<string | null>(null)
+
   if (files.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">No evidence files uploaded yet.</p>
@@ -43,17 +46,35 @@ export function EvidenceList({ files }: EvidenceListProps) {
               </p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="cursor-pointer"
-            onClick={async () => {
-              const url = await getSignedDownloadUrl(file.storagePath)
-              if (url) window.open(url, "_blank")
-            }}
-          >
-            <Download className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="cursor-pointer"
+              onClick={async () => {
+                const res = await fetch(`/api/evidence/download?path=${encodeURIComponent(file.storagePath)}`)
+                if (!res.ok) return
+                const { url } = await res.json()
+                if (url) window.open(url, "_blank")
+              }}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="cursor-pointer text-destructive hover:text-destructive"
+              disabled={deleting === file.id}
+              onClick={() => {
+                if (window.confirm("Delete this evidence file?")) {
+                  setDeleting(file.id)
+                  onDelete(file.id)
+                }
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       ))}
     </div>

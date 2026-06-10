@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatDate } from "@/lib/utils"
 import { CompleteTaskForm } from "@/features/checklists/complete-task-form"
-import { EvidenceList } from "@/features/evidence/evidence-list"
+import { EvidenceSection } from "@/features/evidence/evidence-section"
 import { ArrowLeft, ExternalLink } from "lucide-react"
 
 interface TaskDetailPageProps {
@@ -92,7 +92,8 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
               <CardTitle>Evidence Files</CardTitle>
             </CardHeader>
             <CardContent>
-              <EvidenceList
+              <EvidenceSection
+                occurrenceId={currentOccurrence.id}
                 files={currentOccurrence.evidenceFiles.map((f) => ({
                   ...f,
                   uploadedBy: null,
