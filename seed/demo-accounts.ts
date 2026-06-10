@@ -1,18 +1,5 @@
 import { db } from "@/lib/db"
-import { randomBytes, scrypt } from "node:crypto"
-import { promisify } from "node:util"
-
-const scryptAsync = promisify(scrypt)
-
-async function hashPassword(password: string): Promise<string> {
-  const saltHex = randomBytes(16).toString("hex")
-  const derivedKey = (await scryptAsync(
-    password,
-    saltHex,
-    64,
-  )) as Buffer
-  return `${saltHex}:${derivedKey.toString("hex")}`
-}
+import { hashPassword } from "@better-auth/utils/password"
 
 export async function seedDemoAccounts() {
   const existing = await db.user.findFirst({

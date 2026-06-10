@@ -26,3 +26,6 @@
 
 # pdf-generation
 - For Inspection Pack, use server-side PDF generation instead of browser print-to-PDF. Confidence: 0.85
+
+# database
+- Use UUID instead of CUID for Prisma model unique IDs. Confidence: 0.70
