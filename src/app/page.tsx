@@ -43,8 +43,8 @@ export default function LandingPage() {
       </header>
 
       <section className="flex-1">
-        <div className="mx-auto max-w-3xl px-4 pt-20 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
+        <div className="mx-auto max-w-3xl px-4 pt-16 text-center sm:pt-20">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Stay inspection-ready
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">

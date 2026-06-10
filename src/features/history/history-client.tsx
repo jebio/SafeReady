@@ -123,10 +123,10 @@ export function HistoryClient({
         <div className="space-y-2">
           {initialItems.map((item) => (
             <Card key={item.id}>
-              <CardContent className="flex items-center justify-between py-3">
+              <CardContent className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium">{item.taskTitle}</p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs text-muted-foreground">
                       {formatDate(item.completedAt)}
                     </span>
@@ -135,7 +135,7 @@ export function HistoryClient({
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {item.taskCategory && (
                     <Badge variant="secondary" className="capitalize text-xs">
                       {item.taskCategory.replace(/-/g, " ")}

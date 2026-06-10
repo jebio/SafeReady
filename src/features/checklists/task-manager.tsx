@@ -49,24 +49,24 @@ export function TaskManager({ tasks, members }: TaskManagerProps) {
       <div className="space-y-3">
         {taskList.map((task) => (
           <Card key={task.id} className={task.active ? "" : "opacity-50"}>
-            <CardContent className="flex items-center justify-between py-3">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{task.title}</span>
-                  <Badge variant="outline" className="capitalize text-xs">
+            <CardContent className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="truncate text-sm font-medium">{task.title}</span>
+                  <Badge variant="outline" className="shrink-0 text-xs capitalize">
                     {task.frequency}
                   </Badge>
                   {task.category && (
-                    <Badge variant="secondary" className="capitalize text-xs">
+                    <Badge variant="secondary" className="shrink-0 text-xs capitalize">
                       {task.category.replace(/-/g, " ")}
                     </Badge>
                   )}
                   {task.evidenceRequired && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="shrink-0 text-xs">
                       Evidence
                     </Badge>
                   )}
-                  {!task.active && <Badge className="text-xs">Archived</Badge>}
+                  {!task.active && <Badge className="shrink-0 text-xs">Archived</Badge>}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {task.occurrenceCount} occurrence{task.occurrenceCount !== 1 ? "s" : ""}
@@ -74,7 +74,7 @@ export function TaskManager({ tasks, members }: TaskManagerProps) {
                   {task.assignedMemberName && <> &middot; Assigned to {task.assignedMemberName}</>}
                 </p>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex shrink-0 items-center gap-1">
                 {task.active && (
                   <>
                     <EditTaskDialog task={task} members={members} />

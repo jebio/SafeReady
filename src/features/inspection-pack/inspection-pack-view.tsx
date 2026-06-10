@@ -47,7 +47,7 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">Inspection Pack</h1>
           <p className="text-sm text-muted-foreground">
@@ -57,7 +57,7 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
         <Button
           onClick={handleDownload}
           disabled={loading}
-          className="cursor-pointer"
+          className="w-full cursor-pointer sm:w-auto"
         >
           {loading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -125,10 +125,10 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
             {completedItems.map((item) => (
               <Card key={item.id}>
                 <CardContent className="py-3">
-                  <div className="flex items-start justify-between">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-sm font-medium">{item.taskTitle}</p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span>Completed {formatDate(item.completedAt)}</span>
                         {item.completedByName && (
                           <span>by {item.completedByName}</span>
@@ -140,7 +140,7 @@ export function InspectionPackView({ data }: InspectionPackViewProps) {
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {item.category && (
                         <Badge variant="secondary" className="capitalize text-xs">
                           {item.category.replace(/-/g, " ")}

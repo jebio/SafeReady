@@ -26,12 +26,12 @@ export function TaskFilters() {
   }
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-wrap gap-3">
       <Select
         value={searchParams.get("status") ?? "all"}
         onValueChange={(v) => setParam("status", v)}
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-full sm:w-[160px]">
           <SelectValue placeholder="All statuses" />
         </SelectTrigger>
         <SelectContent>
@@ -45,7 +45,7 @@ export function TaskFilters() {
         value={searchParams.get("frequency") ?? "all"}
         onValueChange={(v) => setParam("frequency", v)}
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-full sm:w-[160px]">
           <SelectValue placeholder="All frequencies" />
         </SelectTrigger>
         <SelectContent>

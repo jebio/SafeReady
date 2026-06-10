@@ -72,7 +72,7 @@ export function NotificationBell({ initialUnreadCount }: NotificationBellProps) 
             className="fixed inset-0 z-40"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border bg-card shadow-lg">
+          <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border bg-card shadow-lg sm:w-80">
             <div className="flex items-center justify-between border-b px-4 py-2">
               <span className="text-sm font-medium">Notifications</span>
               {unreadCount > 0 && (

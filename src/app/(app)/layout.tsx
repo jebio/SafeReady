@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
+import { SidebarProvider } from "@/components/sidebar-context"
 import { AppSidebar } from "@/components/app-sidebar"
 import { AppHeader } from "@/components/app-header"
 
@@ -35,12 +36,14 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <AppSidebar />
-      <div className="flex flex-1 flex-col">
-        <AppHeader user={session.user} unreadCount={unreadCount} />
-        <main className="flex-1 p-6">{children}</main>
+    <SidebarProvider>
+      <div className="flex min-h-screen">
+        <AppSidebar />
+        <div className="flex flex-1 flex-col">
+          <AppHeader user={session.user} unreadCount={unreadCount} />
+          <main className="flex-1 p-4 lg:p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }

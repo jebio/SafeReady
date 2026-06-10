@@ -18,9 +18,9 @@ export function TaskCard({ task }: TaskCardProps) {
   return (
     <Link href={`/checklists/${task.id}`}>
       <Card className="cursor-pointer transition-colors hover:bg-accent/50">
-        <CardHeader className="flex flex-row items-start justify-between pb-2">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{task.title}</CardTitle>
+        <CardHeader className="flex flex-row items-start justify-between gap-2 pb-2">
+          <div className="min-w-0 space-y-1">
+            <CardTitle className="truncate text-base">{task.title}</CardTitle>
             {task.description && (
               <p className="line-clamp-1 text-sm text-muted-foreground">{task.description}</p>
             )}
@@ -30,7 +30,7 @@ export function TaskCard({ task }: TaskCardProps) {
           </Badge>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             {occ && (
               <span className="flex items-center gap-1">
                 <StatusIcon className="h-3 w-3" />

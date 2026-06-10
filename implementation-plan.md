@@ -114,7 +114,7 @@ Action list with icons in settings page
 
 ---
 
-## Phase 5: Custom Checklist Builder 🔴 NOT BUILT
+## Phase 5: Custom Checklist Builder ✅ COMPLETE
 
 **Why:** The onboarding wizard says "customise tasks later" but there's no UI to create, edit, or delete checklist tasks after onboarding. This is core product value (project-scope.md §6.5).
 

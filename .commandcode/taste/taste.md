@@ -17,12 +17,10 @@
 
 # ui-ux
 - Use the 'ui-ux-pro-max' skill for all UI/UX design work (design system generation, searches, implementation). Confidence: 0.75
+- Add confirmation prompts (`window.confirm`) before destructive actions like removing team members. Confidence: 0.70
 
 # authentication
 - Prefer Better-Auth for auth implementation (email/password, database sessions, invite-only). Confidence: 0.60
-
-# ui-ux
-- Add confirmation prompts (`window.confirm`) before destructive actions like removing team members. Confidence: 0.70
 
 # pdf-generation
 - For Inspection Pack, use server-side PDF generation instead of browser print-to-PDF. Confidence: 0.85

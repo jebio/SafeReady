@@ -48,8 +48,8 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
       </Link>
 
       <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">{task.title}</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="text-xl font-bold sm:text-2xl">{task.title}</h1>
           <Badge variant="outline" className="capitalize">
             {task.frequency}
           </Badge>
@@ -110,7 +110,7 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
           <h2 className="text-lg font-semibold">Recent Completions</h2>
           {history.map((occ) => (
             <Card key={occ.id}>
-              <CardContent className="flex items-center justify-between py-3">
+              <CardContent className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium">
                     Completed {formatDate(occ.completedAt!)}
@@ -120,7 +120,7 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
                   </p>
                 </div>
                 {occ.notes && (
-                  <p className="max-w-sm text-right text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground sm:text-right sm:max-w-sm">
                     {occ.notes}
                   </p>
                 )}

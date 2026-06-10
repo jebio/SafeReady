@@ -32,23 +32,23 @@ export function MemberList({
       {members.map((member) => (
         <div
           key={member.id}
-          className="flex items-center justify-between rounded-lg border p-3"
+          className="flex items-center justify-between gap-2 rounded-lg border p-3"
         >
-          <div>
-            <p className="text-sm font-medium">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">
               {member.name}
               {member.userId === currentUserId && (
                 <span className="ml-2 text-xs text-muted-foreground">(you)</span>
               )}
             </p>
-            <p className="text-xs text-muted-foreground">{member.email}</p>
+            <p className="truncate text-xs text-muted-foreground">{member.email}</p>
             <p className="text-xs capitalize text-muted-foreground">{member.role}</p>
           </div>
           {currentRole === "owner" && member.userId !== currentUserId && (
             <Button
               variant="ghost"
               size="sm"
-              className="cursor-pointer text-destructive hover:text-destructive"
+              className="shrink-0 cursor-pointer text-destructive hover:text-destructive"
               onClick={() => onRemove(member.id)}
             >
               <X className="h-4 w-4" />
@@ -68,7 +68,7 @@ interface InviteFormProps {
 
 export function InviteForm({ onInvite, error, pending }: InviteFormProps) {
   return (
-    <form action={onInvite} className="flex items-end gap-2">
+    <form action={onInvite} className="flex flex-col gap-2 sm:flex-row sm:items-end">
       <div className="flex-1 space-y-1">
         <Label htmlFor="invite-email">Email address</Label>
         <Input
@@ -107,10 +107,10 @@ export function PendingInvites({ invitations, onCancel }: PendingInvitesProps) {
       {invitations.map((inv) => (
         <div
           key={inv.id}
-          className="flex items-center justify-between rounded-md border px-3 py-2"
+          className="flex items-center justify-between gap-2 rounded-md border px-3 py-2"
         >
-          <div>
-            <p className="text-sm">{inv.email}</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm">{inv.email}</p>
             <p className="text-xs text-muted-foreground">
               Expires {new Date(inv.expiresAt).toLocaleDateString()}
             </p>
@@ -118,7 +118,7 @@ export function PendingInvites({ invitations, onCancel }: PendingInvitesProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="cursor-pointer text-destructive hover:text-destructive"
+            className="shrink-0 cursor-pointer text-destructive hover:text-destructive"
             onClick={() => onCancel(inv.id)}
           >
             <X className="h-4 w-4" />
